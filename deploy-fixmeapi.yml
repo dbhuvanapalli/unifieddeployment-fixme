@@ -1,0 +1,53 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fixmeapi
+  namespace: fixme
+  labels:
+    app: fixmeapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: fixmeapi
+  template:
+    metadata:
+      labels:
+        app: fixmeapi
+        service: fixmeapi
+    spec:
+      containers:
+        - name: fixmeapi
+          image: pisees/fixmeapi:v2.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+          - name: secrets
+            mountPath: ./appsettings.json
+            subPath: appsettings.json
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+      volumes:
+      - name: secrets
+        secret:
+           secretName: sqlconnectionstring
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fixmeapi
+  labels:
+    app: fixmeapi
+    service: fixmeapi
+spec:
+   type: LoadBalancer
+   ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+   selector:
+    service: fixmeapi

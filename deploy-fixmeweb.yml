@@ -1,0 +1,65 @@
+﻿apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fixmeweb
+  namespace: fixme
+  labels:
+    app: fixmeweb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: fixmeweb
+  template:
+    metadata:
+      labels:
+        app: fixmeweb
+        service: fixmeweb
+    spec:
+      containers:
+        - name: fixmeweb
+          image: pisees/fixmeweb:v2.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: ASPNETCORE_URLS
+              value: http://+:80
+            - name: fix.me.api.url
+              value: http://fixmeapi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fixmeweb
+  labels:
+    app: fixmeweb
+    service: fixmeweb
+spec:
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    service: fixmeweb
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: 
+  name: fixmeweb-ing
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: fixmeweb
+            port:
+              number: 80
+        pathType: Exact
