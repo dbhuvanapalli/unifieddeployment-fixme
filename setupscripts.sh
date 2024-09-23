@@ -26,10 +26,11 @@ unzip -qq sqlpackage.zip -d /opt/sqlpackage
 chmod a+x /opt/sqlpackage/sqlpackage 
 
 echo "deploy sql scripts"
-sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$sqlConnectionString"
+echo $AZURESQLDB_CONN_STR
+sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR"
 
 echo "create appsettings.json file with sql connection string"
-sed -i "s/PLACEHOLDER/$sqlConnectionString/" ./appsettings.json
+sed -i "s/PLACEHOLDER/$AZURESQLDB_CONN_STR/" ./appsettings.json
 
 echo "get aks credentials and set context"
 echo $clusterName
@@ -39,7 +40,7 @@ kubectl use-context $clusterName
 
 echo "create namespace and deploy fixmeapi and fixmeweb"
 kubectl create namespace "fixme"
-kubectl create secret generic "sqlconnectionstring" --from-literal=sql-connection-string="$sqlConnectionString" --namespace "fixme"
+kubectl create secret generic "sqlconnectionstring" --from-literal=sql-connection-string="$AZURESQLDB_CONN_STR" --namespace "fixme"
 kubectl apply -f ./deploy-fixmeapi.yml --namespace "fixme"
 kubectl apply -f ./deploy-fixmeweb.yml --namespace "fixme"
 
