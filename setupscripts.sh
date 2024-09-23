@@ -1,9 +1,9 @@
 #!/bin/bash
 
-rgName=$1
-prefix=$2
-clusterName=$3
-sqlConnectionString=$4
+rgName="$1"
+prefix="$2"
+clusterName="$3"
+sqlConnectionString="$4"
 
 echo "executing setup scripts"
 
