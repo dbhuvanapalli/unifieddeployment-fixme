@@ -3,7 +3,6 @@
 rgName="$1"
 prefix="$2"
 clusterName="$3"
-tenantId="$4"
 
 echo "executing setup scripts"
 
