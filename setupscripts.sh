@@ -28,7 +28,6 @@ chmod a+x /opt/sqlpackage/sqlpackage
 echo "deploy sql scripts"
 echo $AZURESQLDB_CONN_STR
 
-echo '/opt/sqlpackage/sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR" /UniversalAuthentication:"False" /TenantId:"$tenantId"' 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
 /opt/sqlpackage/sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR" /TenantId:"$tenantId" 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
 
 echo "create appsettings.json file with sql connection string"
