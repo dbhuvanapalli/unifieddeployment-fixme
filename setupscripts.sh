@@ -3,7 +3,7 @@
 rgName="$1"
 prefix="$2"
 clusterName="$3"
-sqlConnectionString="$4"
+tenantId="$4"
 
 echo "executing setup scripts"
 
@@ -28,8 +28,8 @@ chmod a+x /opt/sqlpackage/sqlpackage
 echo "deploy sql scripts"
 echo $AZURESQLDB_CONN_STR
 
-echo 'sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR"' 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
-sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR" 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
+echo 'sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR" /UniversalAuthentication:"False" /TenantId:"$tenantId"' 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
+sqlpackage /Action:Publish /SourceFile:"./fix.me.sql.dacpac" /TargetConnectionString:"$AZURESQLDB_CONN_STR" /UniversalAuthentication:"False" /TenantId:"$tenantId" 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
 
 echo "create appsettings.json file with sql connection string"
 sed -i "s/PLACEHOLDER/$AZURESQLDB_CONN_STR/" ./appsettings.json
@@ -47,6 +47,3 @@ kubectl apply -f ./deploy-fixmeapi.yml --namespace "fixme"
 kubectl apply -f ./deploy-fixmeweb.yml --namespace "fixme"
 
 sleep 20s
-
-
-
