@@ -5,7 +5,7 @@ prefix="$2"
 clusterName="$3"
 msiResoruceId="$4"
 
-az login --identity --username $msiResoruceId 2>&1 | tee $AZ_SCRIPTS_OUTPUT_PATH
+az login --identity --username $msiResoruceId
 
 echo "executing setup scripts"
 
