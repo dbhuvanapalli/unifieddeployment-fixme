@@ -4,10 +4,10 @@ rgName="$1"
 prefix="$2"
 clusterName="$3"
 msiResoruceId="$4"
+subscriptionId="$5"
 
 echo "az login with managed identity"
 az login --identity --username $msiResoruceId
-subscriptionId=$(az group show --name rg-fixme01 --query "id" --output tsv | cut -d'/' -f3)
 az account set --subscription $subscriptionId
 
 echo "installing dependencies"
